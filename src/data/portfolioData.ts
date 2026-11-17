@@ -84,6 +84,7 @@ export const PROFILE = {
   photoUrl: '/aditya-profile.jpg',
   resumeUrl: '/Aditya_Chouhan_Resume.pdf',
   resumeDownloadUrl: '/api/resume/download',
+  websiteUrl: 'https://aditya-singh-chouhan.vercel.app/',
   githubUrl: 'https://github.com/aditya2438',
   githubHandle: '@aditya2438',
   linkedinUrl: 'https://www.linkedin.com/in/adityachouhan24',

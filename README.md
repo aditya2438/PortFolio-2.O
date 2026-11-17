@@ -2,7 +2,7 @@
 
 Interactive full-stack developer portfolio built by **Aditya Singh Chouhan** (Software Developer & Java Backend Engineer — Ujjain / Indore, MP, India).
 
-**Live Website:** [aditya-portfolio-mocha-zeta.vercel.app](https://aditya-portfolio-mocha-zeta.vercel.app/)  
+**Live Website:** [aditya-singh-chouhan.vercel.app](https://aditya-singh-chouhan.vercel.app/)  
 **Repository:** [github.com/aditya2438/PortFolio-2.O](https://github.com/aditya2438/PortFolio-2.O)  
 **GitHub Profile:** [github.com/aditya2438](https://github.com/aditya2438)  
 **Vercel Project:** [vercel.com/aditya2438/aditya-portfolio](https://vercel.com/aditya2438/aditya-portfolio)

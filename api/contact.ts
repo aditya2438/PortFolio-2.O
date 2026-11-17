@@ -218,7 +218,7 @@ export default async function handler(req: ServerlessReq, res: ServerlessRes): P
       const timer = setTimeout(() => ctrl.abort(), 3500);
       const hostHeader = req.headers.host;
       const host = Array.isArray(hostHeader) ? hostHeader[0] : hostHeader;
-      const effectiveOrigin = origin || (host ? `https://${host}` : 'https://aditya-portfolio-mocha-zeta.vercel.app');
+      const effectiveOrigin = origin || (host ? `https://${host}` : 'https://aditya-singh-chouhan.vercel.app');
       const fsRes = await fetch(`https://formsubmit.co/ajax/${RECIPIENT_EMAIL}`, {
         method: 'POST',
         signal: ctrl.signal,
