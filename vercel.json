@@ -1,0 +1,54 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "functions": {
+    "api/resume.ts": {
+      "includeFiles": "public/Aditya_Chouhan_Resume.pdf"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/resume/download",
+      "destination": "/api/resume?download=1"
+    },
+    {
+      "source": "/((?!api/|assets/|Aditya_Chouhan_Resume\\.pdf|aditya-profile\\.jpg|manifest\\.json|sw\\.js|workbox-.*\\.js|.*\\..*).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(index\\.html|sw\\.js)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/Aditya_Chouhan_Resume.pdf",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/pdf"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "inline; filename=\"Aditya_Chouhan_Resume.pdf\""
+        }
+      ]
+    }
+  ]
+}

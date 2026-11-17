@@ -1,0 +1,256 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-avant: "Syne", "Space Grotesk", ui-sans-serif, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --mood-a: #38bdf8;
+    --mood-b: #818cf8;
+    --mood-c: #22d3ee;
+    --mood-glow-a: rgba(56, 189, 248, 0.22);
+    --mood-glow-b: rgba(129, 140, 248, 0.16);
+    --mood-glow-c: rgba(14, 165, 233, 0.14);
+  }
+
+  :root[data-mood="solar"] {
+    --mood-a: #f59e0b;
+    --mood-b: #fb7185;
+    --mood-c: #fbbf24;
+    --mood-glow-a: rgba(245, 158, 11, 0.22);
+    --mood-glow-b: rgba(251, 113, 133, 0.16);
+    --mood-glow-c: rgba(251, 191, 36, 0.14);
+  }
+
+  :root[data-mood="emerald"] {
+    --mood-a: #34d399;
+    --mood-b: #2dd4bf;
+    --mood-c: #38bdf8;
+    --mood-glow-a: rgba(52, 211, 153, 0.22);
+    --mood-glow-b: rgba(45, 212, 191, 0.16);
+    --mood-glow-c: rgba(56, 189, 248, 0.14);
+  }
+
+  :root[data-mood="amethyst"] {
+    --mood-a: #c084fc;
+    --mood-b: #f472b6;
+    --mood-c: #818cf8;
+    --mood-glow-a: rgba(192, 132, 252, 0.22);
+    --mood-glow-b: rgba(244, 114, 182, 0.16);
+    --mood-glow-c: rgba(129, 140, 248, 0.14);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+    background-color: #040711;
+    color: #f8fafc;
+    overflow-x: hidden;
+  }
+
+  body {
+    overflow-x: hidden;
+    background-color: #040711;
+    background-image:
+      radial-gradient(ellipse 90% 55% at 15% 0%, var(--mood-glow-a), transparent 68%),
+      radial-gradient(ellipse 80% 50% at 88% 12%, var(--mood-glow-b), transparent 65%),
+      radial-gradient(ellipse 75% 52% at 50% 95%, var(--mood-glow-c), transparent 68%),
+      linear-gradient(180deg, #040711 0%, #070c1a 48%, #04060d 100%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.025em;
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.font-avant {
+  font-family: var(--font-avant);
+  letter-spacing: -0.03em;
+}
+
+.font-editorial {
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+/* Flowing Liquid Silk Text Gradients */
+@keyframes auroraTextShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.text-gradient-aurora {
+  background-image: linear-gradient(
+    95deg,
+    var(--mood-a) 0%,
+    var(--mood-b) 38%,
+    var(--mood-c) 72%,
+    var(--mood-a) 100%
+  );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: auroraTextShift 6.5s ease infinite;
+}
+
+.text-gradient-solar {
+  background-image: linear-gradient(95deg, #ff9f1c 0%, #fb7185 52%, #facc15 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Architectural Liquid Frosted Glassmorphism (Apple-grade Specular Rim + Silk Refraction) */
+.glass-surface {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.085) 0%,
+    rgba(13, 20, 40, 0.64) 48%,
+    rgba(7, 11, 24, 0.78) 100%
+  );
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  contain: layout style;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 24px 56px -18px rgba(0, 0, 0, 0.78),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-surface-subtle {
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.065) 0%,
+    rgba(11, 17, 36, 0.56) 100%
+  );
+  backdrop-filter: blur(12px) saturate(145%);
+  -webkit-backdrop-filter: blur(12px) saturate(145%);
+  contain: layout style;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  box-shadow:
+    0 14px 34px -16px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+/* Clean Slow Drifting Liquid Caustic Orbs Behind Glass Cards (Zero Grid Noise) */
+@keyframes liquidDriftA {
+  0%, 100% { transform: translate3d(0%, 0%, 0) scale(1); }
+  50% { transform: translate3d(6%, 5%, 0) scale(1.08); }
+}
+
+@keyframes liquidDriftB {
+  0%, 100% { transform: translate3d(0%, 0%, 0) scale(1); }
+  50% { transform: translate3d(-7%, -4%, 0) scale(1.06); }
+}
+
+.liquid-caustic-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.liquid-orb-a {
+  position: absolute;
+  top: -12%;
+  left: -8%;
+  width: 56vw;
+  height: 56vw;
+  max-width: 720px;
+  max-height: 720px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 40% 40%, var(--mood-glow-a) 0%, transparent 68%);
+  animation: liquidDriftA 18s ease-in-out infinite;
+  will-change: transform;
+}
+
+.liquid-orb-b {
+  position: absolute;
+  bottom: -16%;
+  right: -10%;
+  width: 52vw;
+  height: 52vw;
+  max-width: 680px;
+  max-height: 680px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 60% 60%, var(--mood-glow-b) 0%, transparent 68%);
+  animation: liquidDriftB 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes marqueeForward {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes marqueeBackward {
+  0% { transform: translate3d(-50%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marqueeForward 32s linear infinite;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marqueeBackward 36s linear infinite;
+}
+
+.animate-marquee:hover,
+.animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee,
+  .animate-marquee-reverse,
+  .text-gradient-aurora,
+  .liquid-orb-a,
+  .liquid-orb-b {
+    animation: none;
+  }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #040711;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--mood-a);
+}
