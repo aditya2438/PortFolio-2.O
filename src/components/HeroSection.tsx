@@ -355,9 +355,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenResume }) => {
                         <img
                           src={PROFILE.photoUrl}
                           alt="Profile portrait of Aditya Chouhan"
+                          loading="eager"
+                          decoding="async"
                           referrerPolicy="no-referrer"
                           onError={() => setImgFailed(true)}
-                          className="h-full w-full object-cover object-top"
+                          className="h-full w-full object-cover object-top transform-gpu transition-transform duration-300 group-hover:scale-105"
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center bg-[#0d132b] font-display text-2xl font-bold text-[#22d3ee]">
