@@ -53,6 +53,7 @@ export const ContactSection: React.FC = () => {
     message: false,
   });
   const [submitting, setSubmitting] = useState(false);
+  const [isSent, setIsSent] = useState(false);
   const [submitResult, setSubmitResult] = useState<ContactServerResult | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -69,6 +70,16 @@ export const ContactSection: React.FC = () => {
     window.setTimeout(() => setEmailCopied(false), 2000);
   };
 
+  const handleSuccess = () => {
+    setIsSent(true);
+    setForm({ email: '', message: '', topic: 'Portfolio Inquiry' });
+    setTouched({ email: false, message: false });
+    setSubmitError(null);
+    setSubmitResult(null);
+    triggerConfettiBurst(0.65, 0.65);
+    window.setTimeout(() => setIsSent(false), 4500);
+  };
+
   const applyStarter = (starter: (typeof CONTACT_STARTERS)[number]) => {
     setForm((prev) => ({
       ...prev,
@@ -78,6 +89,7 @@ export const ContactSection: React.FC = () => {
     setTouched((prev) => ({ ...prev, message: true }));
     setSubmitResult(null);
     setSubmitError(null);
+    setIsSent(false);
   };
 
   const tryClientFormSubmitFallback = async (
@@ -215,30 +227,11 @@ export const ContactSection: React.FC = () => {
           sanitizedTopic,
         );
         if (browserRelay.delivered) {
-          setSubmitResult({
-            ok: true,
-            recipient: PROFILE.email,
-            deliveredViaEmail: true,
-            provider: 'formsubmit',
-            gmailComposeUrl: buildGmailComposeHref(form),
-            mailtoUrl: buildMailtoHref(form),
-          });
-          triggerConfettiBurst(0.65, 0.65);
+          handleSuccess();
         } else {
           setSubmitError(
-            browserRelay.requiresActivation
-              ? `One-time FormSubmit activation email sent to ${PROFILE.email}. Click Activate there, or use Open in Gmail / WhatsApp right below.`
-              : `Mail relay returned (${serverMsg}) — tap Open in Gmail or WhatsApp below to deliver directly.`,
+            `Unable to dispatch automatically (${serverMsg}). Tap Open in Gmail or WhatsApp to send directly.`,
           );
-          setSubmitResult({
-            ok: true,
-            recipient: PROFILE.email,
-            deliveredViaEmail: false,
-            requiresActivation: browserRelay.requiresActivation,
-            deliveryNote: browserRelay.note || serverMsg,
-            gmailComposeUrl: buildGmailComposeHref(form),
-            mailtoUrl: buildMailtoHref(form),
-          });
         }
         return;
       }
@@ -249,49 +242,23 @@ export const ContactSection: React.FC = () => {
           sanitizedMessage,
           sanitizedTopic,
         );
-        setSubmitResult({
-          ...data,
-          deliveredViaEmail: browserRelay.delivered,
-          requiresActivation: data.requiresActivation || browserRelay.requiresActivation,
-          provider: browserRelay.delivered ? 'formsubmit' : data.provider,
-          deliveryNote: data.deliveryNote || browserRelay.note,
-        });
-        triggerConfettiBurst(0.65, 0.65);
+        handleSuccess();
       } else {
-        setSubmitResult(data);
-        triggerConfettiBurst(0.65, 0.65);
+        handleSuccess();
       }
     } catch (err) {
-      const errDetail = err instanceof Error ? err.message : 'Request blocked or offline';
+      const errDetail = err instanceof Error ? err.message : 'Network issue';
       const browserRelay = await tryClientFormSubmitFallback(
         sanitizedEmail,
         sanitizedMessage,
         sanitizedTopic,
       );
       if (browserRelay.delivered) {
-        setSubmitResult({
-          ok: true,
-          recipient: PROFILE.email,
-          deliveredViaEmail: true,
-          provider: 'formsubmit',
-          gmailComposeUrl: buildGmailComposeHref(form),
-          mailtoUrl: buildMailtoHref(form),
-        });
-        triggerConfettiBurst(0.65, 0.65);
+        handleSuccess();
       } else {
         setSubmitError(
-          browserRelay.requiresActivation
-            ? `One-time FormSubmit activation sent to ${PROFILE.email}. You can also send via Open in Gmail or WhatsApp below.`
-            : `Mail relay unreachable (${errDetail}) — tap Open in Gmail or WhatsApp below to deliver immediately.`,
+          `Mail service unreachable (${errDetail}). Tap Open in Gmail or WhatsApp to send directly.`,
         );
-        setSubmitResult({
-          ok: true,
-          recipient: PROFILE.email,
-          deliveredViaEmail: false,
-          requiresActivation: browserRelay.requiresActivation,
-          gmailComposeUrl: buildGmailComposeHref(form),
-          mailtoUrl: buildMailtoHref(form),
-        });
       }
     } finally {
       setSubmitting(false);
@@ -511,7 +478,8 @@ export const ContactSection: React.FC = () => {
                   onBlur={() => setTouched((t) => ({ ...t, email: true }))}
                   onChange={(e) => {
                     setForm((f) => ({ ...f, email: e.target.value }));
-                    if (submitResult) setSubmitResult(null);
+                    if (isSent) setIsSent(false);
+                    if (submitError) setSubmitError(null);
                   }}
                   placeholder="you@company.com"
                   className={`min-h-[46px] w-full rounded-xl border bg-black/45 px-4 py-2.5 text-sm text-[#faf7f2] placeholder:text-stone-500 focus:outline-none transition-colors ${
@@ -564,7 +532,8 @@ export const ContactSection: React.FC = () => {
                   onBlur={() => setTouched((t) => ({ ...t, message: true }))}
                   onChange={(e) => {
                     setForm((f) => ({ ...f, message: e.target.value }));
-                    if (submitResult) setSubmitResult(null);
+                    if (isSent) setIsSent(false);
+                    if (submitError) setSubmitError(null);
                   }}
                   placeholder="Write your message for Aditya here — role details, project idea, or feedback..."
                   className={`w-full rounded-xl border bg-black/45 px-4 py-2.5 text-sm text-[#faf7f2] placeholder:text-stone-500 focus:outline-none transition-colors ${
@@ -584,15 +553,24 @@ export const ContactSection: React.FC = () => {
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <motion.button
                   type="submit"
-                  disabled={submitting}
-                  whileHover={{ scale: submitting ? 1 : 1.03, y: submitting ? 0 : -2 }}
+                  disabled={submitting || isSent}
+                  whileHover={{ scale: submitting || isSent ? 1 : 1.03, y: submitting || isSent ? 0 : -2 }}
                   whileTap={{ scale: 0.97 }}
-                  className="group inline-flex min-h-[46px] items-center gap-2.5 rounded-xl bg-gradient-to-r from-[#22d3ee] to-[#38bdf8] px-6 py-2.5 text-sm font-bold text-[#060919] shadow-xl shadow-[#22d3ee]/20 transition-all hover:brightness-110 disabled:opacity-60 cursor-pointer"
+                  className={`group inline-flex min-h-[46px] items-center gap-2.5 rounded-xl px-6 py-2.5 text-sm font-bold shadow-xl transition-all cursor-pointer ${
+                    isSent
+                      ? 'bg-gradient-to-r from-[#2ec4b6] to-[#10b981] text-[#060919] shadow-[#2ec4b6]/25'
+                      : 'bg-gradient-to-r from-[#22d3ee] to-[#38bdf8] text-[#060919] shadow-[#22d3ee]/20 hover:brightness-110 disabled:opacity-60'
+                  }`}
                 >
                   {submitting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
                       <span>Sending to Aditya&apos;s Gmail...</span>
+                    </>
+                  ) : isSent ? (
+                    <>
+                      <Check className="h-4 w-4 stroke-[3]" />
+                      <span>Message Sent!</span>
                     </>
                   ) : (
                     <>
@@ -619,50 +597,6 @@ export const ContactSection: React.FC = () => {
                 <p role="alert" className="rounded-xl border border-[#ff5d8f]/40 bg-[#ff5d8f]/10 px-4 py-3 text-xs text-rose-200">
                   {submitError}
                 </p>
-              )}
-
-              {submitResult?.ok && (
-                <div
-                  role="status"
-                  className="rounded-xl border border-[#2ec4b6]/40 bg-[#2ec4b6]/10 p-4 text-xs text-emerald-100"
-                >
-                  <p className="font-semibold text-[#2ec4b6]">
-                    {submitResult.deliveredViaEmail
-                      ? `Delivered! Your message was sent to ${PROFILE.email}.`
-                      : submitResult.requiresActivation
-                        ? `Almost ready — check ${PROFILE.email} once to activate FormSubmit.`
-                        : `Message saved (${submitResult.inquiryId || 'ready'}) for ${PROFILE.email}!`}
-                  </p>
-                  <p className="mt-1 leading-relaxed text-stone-300">
-                    {submitResult.deliveredViaEmail
-                      ? 'Delivered via server mail relay. (If testing with Resend onboarding@resend.dev, check Spam/Promotions folder too!)'
-                      : submitResult.deliveryNote
-                        ? `Mail relay note: ${submitResult.deliveryNote} — you can also click Open in Gmail or Ping on WhatsApp right below.`
-                        : 'You can also send directly via a prefilled Gmail window or ping Aditya on WhatsApp.'}
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <a
-                      href={activeGmailHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-[#ff9f1c]/45 bg-[#ff9f1c]/15 px-3 py-1.5 font-semibold text-[#ff9f1c] transition-colors hover:bg-[#ff9f1c]/25"
-                    >
-                      <Mail className="h-3.5 w-3.5" />
-                      <span>Open in Gmail</span>
-                    </a>
-                    <a
-                      href={buildWhatsAppHref(
-                        `Hi Aditya, I just sent a message via your portfolio from ${form.email.trim()}: ${form.message.trim().slice(0, 120)}`,
-                      )}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-[#2ec4b6]/45 bg-[#2ec4b6]/15 px-3 py-1.5 font-semibold text-[#2ec4b6] transition-colors hover:bg-[#2ec4b6]/25"
-                    >
-                      <WhatsAppLogo className="h-3.5 w-3.5" />
-                      <span>Ping on WhatsApp</span>
-                    </a>
-                  </div>
-                </div>
               )}
             </form>
           </div>
